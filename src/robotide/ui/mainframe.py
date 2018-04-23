@@ -38,6 +38,7 @@ from .progress import LoadProgressObserver
 _menudata = """
 [File]
 !&New Project | Create a new top level suite | Ctrlcmd-N
+!&Create TestCase | create testcases
 ---
 !&Open Test Suite | Open file containing tests | Ctrlcmd-O | ART_FILE_OPEN
 !Open &Directory | Open directory containing datafiles | Shift-Ctrlcmd-O | ART_FOLDER_OPEN
