@@ -223,12 +223,22 @@ class RideFrame(wx.Frame, RideEventHandler):
     def OnSave(self, event):
         self.save()
 
+    def OnCreateTestCase(self, event):
+        self.create_testCase()
+
     def OnSaveAll(self, event):
         self.save_all()
 
     def save_all(self):
         self._show_dialog_for_files_without_format()
         self._controller.execute(SaveAll())
+
+    def create_testCase(self, controller=None):
+        if controller is None:
+            controller=self.get_selected_datafile_controller()
+            print "ankur"
+        else:
+            print "sravanya"
 
     def save(self, controller=None):
         if controller is None :
