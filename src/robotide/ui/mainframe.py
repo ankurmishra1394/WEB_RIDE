@@ -13,6 +13,12 @@
 #  limitations under the License.
 
 import wx
+import yaml
+import io
+from git import Repo
+import os
+import os.path
+import shutil
 
 from robotide.action import ActionInfoCollection, ActionFactory, SeparatorInfo
 from robotide.context import ABOUT_RIDE, SHORTCUT_KEYS
@@ -38,13 +44,13 @@ from .progress import LoadProgressObserver
 _menudata = """
 [File]
 !&New Project | Create a new top level suite | Ctrlcmd-N
-!&Create TestCase | create testcases
 ---
 !&Open Test Suite | Open file containing tests | Ctrlcmd-O | ART_FILE_OPEN
 !Open &Directory | Open directory containing datafiles | Shift-Ctrlcmd-O | ART_FOLDER_OPEN
 ---
 &Save | Save selected datafile | Ctrlcmd-S | ART_FILE_SAVE
 !Save &All | Save all changes | Ctrlcmd-Shift-S | ART_FILE_SAVE_AS
+!Save IN GIT | Save all changes
 ---
 !E&xit | Exit RIDE | Ctrlcmd-Q
 
@@ -223,22 +229,40 @@ class RideFrame(wx.Frame, RideEventHandler):
     def OnSave(self, event):
         self.save()
 
-    def OnCreateTestCase(self, event):
-        self.create_testCase()
+    def OnSaveINGIT(self,event):
+        self.save_in_git()
 
     def OnSaveAll(self, event):
         self.save_all()
 
+    def save_in_git(self, controller=None):
+        if controller is None:
+            import requests
+            with open('/tmp/test_case_id.txt') as output:
+                    test_case_id=output.readline().strip()
+            url = 'http://192.168.5.121:8000/test_case/'+test_case_id+'/robot/file/checkout'
+            print url, "-------"
+            with open('/tmp/test_case_path.txt') as output:
+                    test_case_path=output.readline().strip()
+            print test_case_path, "-------------test_case_path------------"
+            with open(test_case_path, 'r') as out:
+                robot_file=out.readline()
+            print robot_file, "-------------robot_file------------"
+            files = {'files[]':robot_file}
+            data = {'file_path' : test_case_path, "id" : test_case_id}
+            header = {'access-token':'$2b$12$yAAT03Gbo1sQqmeUI4KjnupbvpgJn/XGQNtaWpu.rv8CrHHvleLe.'}
+            response = requests.post(url, files=files, data=data, headers=header)
+            print response.status_code, "------------------------sd-sd-sd----------------------"
+ 
+	if controller is not None:
+             if not controller.has_format():
+                 self._show_dialog_for_files_without_format(controller)
+             else:
+                 controller.execute(SaveFile())
+
     def save_all(self):
         self._show_dialog_for_files_without_format()
         self._controller.execute(SaveAll())
-
-    def create_testCase(self, controller=None):
-        if controller is None:
-            controller=self.get_selected_datafile_controller()
-            print "ankur"
-        else:
-            print "sravanya"
 
     def save(self, controller=None):
         if controller is None :
