@@ -15,7 +15,6 @@
 import wx
 import yaml
 import io
-from git import Repo
 import os
 import os.path
 import shutil
@@ -239,26 +238,26 @@ class RideFrame(wx.Frame, RideEventHandler):
         if controller is None:
             import requests
             with open('/tmp/test_case_id.txt') as output:
-                    test_case_id=output.readline().strip()
-            url = 'http://192.168.5.121:8000/test_case/'+test_case_id+'/robot/file/checkout'
-            print url, "-------"
+                test_case_id=output.readline().strip()
+            with open('/tmp/server_url.txt') as output:
+                server_url=output.readline().strip()
+            url = server_url.strip()
             with open('/tmp/test_case_path.txt') as output:
-                    test_case_path=output.readline().strip()
-            print test_case_path, "-------------test_case_path------------"
-            with open(test_case_path, 'r') as out:
-                robot_file=out.readline()
-            print robot_file, "-------------robot_file------------"
+                test_case_path=output.readline().strip()
+            with open('/tmp/user_credential.txt') as output:
+                user_credential=output.readline().strip()
+            robot_file = open(test_case_path, 'r')
             files = {'files[]':robot_file}
             data = {'file_path' : test_case_path, "id" : test_case_id}
-            header = {'access-token':'$2b$12$yAAT03Gbo1sQqmeUI4KjnupbvpgJn/XGQNtaWpu.rv8CrHHvleLe.'}
+            header = {'access-token':user_credential.strip()}
             response = requests.post(url, files=files, data=data, headers=header)
-            print response.status_code, "------------------------sd-sd-sd----------------------"
- 
-	if controller is not None:
-             if not controller.has_format():
-                 self._show_dialog_for_files_without_format(controller)
-             else:
-                 controller.execute(SaveFile())
+            robot_file.close()
+        if controller is not None:
+            if not controller.has_format():
+                self._show_dialog_for_files_without_format(controller)
+            else:
+                controller.execute(SaveFile())
+
 
     def save_all(self):
         self._show_dialog_for_files_without_format()
