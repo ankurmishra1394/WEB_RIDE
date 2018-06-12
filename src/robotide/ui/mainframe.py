@@ -246,10 +246,12 @@ class RideFrame(wx.Frame, RideEventHandler):
                 test_case_path=output.readline().strip()
             with open('/tmp/user_credential.txt') as output:
                 user_credential=output.readline().strip()
+            with open('/tmp/connection_name.txt') as output:
+                connection_name=output.readline().strip()
             robot_file = open(test_case_path, 'r')
             files = {'files[]':robot_file}
             data = {'file_path' : test_case_path, "id" : test_case_id}
-            header = {'access-token':user_credential.strip()}
+            header = {'access-token':user_credential.strip(), 'tenant-name':connection_name.strip()}
             response = requests.post(url, files=files, data=data, headers=header)
             robot_file.close()
         if controller is not None:
