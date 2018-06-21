@@ -49,7 +49,7 @@ _menudata = """
 ---
 &Save | Save selected datafile | Ctrlcmd-S | ART_FILE_SAVE
 !Save &All | Save all changes | Ctrlcmd-Shift-S | ART_FILE_SAVE_AS
-!Save IN GIT | Save all changes
+!Check In GIT | Save all changes
 ---
 !E&xit | Exit RIDE | Ctrlcmd-Q
 
@@ -228,13 +228,13 @@ class RideFrame(wx.Frame, RideEventHandler):
     def OnSave(self, event):
         self.save()
 
-    def OnSaveINGIT(self,event):
-        self.save_in_git()
+    def OnCheckInGIT(self,event):
+        self.check_in_git()
 
     def OnSaveAll(self, event):
         self.save_all()
 
-    def save_in_git(self, controller=None):
+    def check_in_git(self, controller=None):
         if controller is None:
             import requests
             with open('/tmp/test_case_id.txt') as output:
